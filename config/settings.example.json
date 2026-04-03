@@ -1,0 +1,71 @@
+{
+    "Organization": {
+        "Name": "Contoso Ltd",
+        "Domain": "contoso.com",
+        "TenantId": "00000000-0000-0000-0000-000000000000",
+        "DefaultOU": "OU=Users,OU=Corporate,DC=contoso,DC=com",
+        "HomeFolderRoot": "\\\\fileserver\\home$",
+        "SmtpServer": "smtp.contoso.com",
+        "SmtpPort": 587,
+        "SmtpFrom": "it-automation@contoso.com"
+    },
+    "Logging": {
+        "Path": "C:\\ITToolkit\\Logs",
+        "Level": "Information",
+        "RetentionDays": 90
+    },
+    "SystemHealth": {
+        "DiskSpaceWarningPercent": 20,
+        "DiskSpaceCriticalPercent": 10,
+        "CertExpiryWarningDays": 30,
+        "MonitoredServices": [
+            "Spooler",
+            "W32Time",
+            "WinRM",
+            "BITS",
+            "wuauserv"
+        ]
+    },
+    "BaselineApps": [
+        { "Id": "Google.Chrome", "Name": "Google Chrome" },
+        { "Id": "Mozilla.Firefox", "Name": "Mozilla Firefox" },
+        { "Id": "7zip.7zip", "Name": "7-Zip" },
+        { "Id": "Notepad++.Notepad++", "Name": "Notepad++" },
+        { "Id": "Microsoft.Teams", "Name": "Microsoft Teams" },
+        { "Id": "Adobe.Acrobat.Reader.64-bit", "Name": "Adobe Acrobat Reader" },
+        { "Id": "VideoLAN.VLC", "Name": "VLC Media Player" },
+        { "Id": "Microsoft.PowerShell", "Name": "PowerShell 7" }
+    ],
+    "WindowsSettings": {
+        "EnableDarkMode": true,
+        "ShowFileExtensions": true,
+        "ShowHiddenFiles": false,
+        "DisableTelemetry": true,
+        "DisableCortana": true,
+        "SetPowerPlanHighPerformance": true
+    },
+    "NetworkDiagnostics": {
+        "DnsServers": [ "8.8.8.8", "1.1.1.1" ],
+        "TestUrls": [ "https://www.microsoft.com", "https://portal.azure.com" ],
+        "CommonPorts": [
+            { "Host": "smtp.contoso.com", "Port": 587, "Description": "SMTP" },
+            { "Host": "dc01.contoso.com", "Port": 389, "Description": "LDAP" },
+            { "Host": "dc01.contoso.com", "Port": 636, "Description": "LDAPS" },
+            { "Host": "proxy.contoso.com", "Port": 8080, "Description": "Proxy" }
+        ]
+    },
+    "M365": {
+        "LicenseSkuId": "00000000-0000-0000-0000-000000000000",
+        "UsageLocation": "US",
+        "DefaultGroups": [
+            "All-Staff",
+            "M365-BasicUsers"
+        ],
+        "GraphScopes": [
+            "User.ReadWrite.All",
+            "Group.ReadWrite.All",
+            "Directory.ReadWrite.All",
+            "DeviceManagementConfiguration.ReadWrite.All"
+        ]
+    }
+}
