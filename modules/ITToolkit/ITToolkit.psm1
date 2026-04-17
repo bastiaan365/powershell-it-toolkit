@@ -67,7 +67,8 @@ function Write-Log {
         catch { }
     }
     if (-not $LogPath) {
-        $LogPath = Join-Path $env:TEMP 'ITToolkit\Logs'
+        # Cross-platform temp dir: $env:TEMP is unset on Linux/macOS PowerShell.
+        $LogPath = Join-Path ([System.IO.Path]::GetTempPath()) (Join-Path 'ITToolkit' 'Logs')
     }
 
     if (-not (Test-Path -Path $LogPath)) {
