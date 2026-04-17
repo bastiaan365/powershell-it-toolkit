@@ -105,4 +105,9 @@ When **reviewing my code**:
 
 _Claude maintains this section. List anything in the repo that doesn't match the conventions above, with why it's still there and what would need to happen to fix it._
 
-- _(empty until first audit pass)_
+- **Lowercase directory names** (`modules/`, `scripts/`, `config/`) instead of PascalCase. Cosmetic; PowerShell on Windows is case-insensitive but Linux filesystems aren't. To fix: `git mv` to PascalCase when there's a natural reason to touch them.
+- **`modules/ITToolkit.psm1` is a flat file**, not `modules/ITToolkit/ITToolkit.psd1 + .psm1`. To fix: scaffold the subdirectory + manifest with `New-ModuleManifest`, move the `.psm1` into it, declare exported functions. Worth doing before the module gains a second function.
+- **`scripts/` has no category subdirectories** — eight `.ps1` files at the top level. To fix: group by purpose (e.g. `endpoint/`, `identity/`, `network/`, `m365/`) once each bucket has enough scripts to justify it.
+- **No `Tests/` directory** — no Pester coverage exists. Heredoc requires Pester for new module functions; existing scripts are uncovered. To fix: backfill tests for `ITToolkit.psm1` first, then add tests alongside any new function.
+- **No `docs/` or `examples/` directories.** Comment-based help in script headers is currently the only documentation. To fix: add once the public surface outgrows README + inline help.
+- **`config/` is not in target structure but is in the repo** (holds `settings.example.json`). Reasonable place for it; treat as accepted convention rather than drift.
