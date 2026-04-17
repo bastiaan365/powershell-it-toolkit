@@ -77,7 +77,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 # Import shared module
-$modulePath = Join-Path (Split-Path -Parent $PSScriptRoot) 'modules\ITToolkit.psm1'
+$modulePath = Join-Path (Split-Path -Parent $PSScriptRoot) 'modules/ITToolkit'
 if (Test-Path $modulePath) {
     Import-Module $modulePath -Force
 }
