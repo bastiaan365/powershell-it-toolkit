@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    name: PSSA + Pester (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache PowerShell modules
+        id: psmodule-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/share/powershell/Modules
+            ~/Documents/PowerShell/Modules
+          key: psmod-${{ matrix.os }}-pester5-pssa1.25
+
+      - name: Install Pester + PSScriptAnalyzer
+        if: steps.psmodule-cache.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          Install-Module -Name Pester -RequiredVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+          Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.25.0 -Scope CurrentUser -Force
+
+      - name: Show module versions
+        shell: pwsh
+        run: |
+          Get-Module -ListAvailable Pester, PSScriptAnalyzer |
+            Select-Object Name, Version | Format-Table -AutoSize
+
+      - name: Run PSScriptAnalyzer (fail on any finding)
+        shell: pwsh
+        run: |
+          $findings = Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
+          if ($findings) {
+              $findings | Format-Table -AutoSize
+              throw "PSScriptAnalyzer found $($findings.Count) finding(s) at Error or Warning severity."
+          }
+          Write-Host "PSScriptAnalyzer: clean."
+
+      - name: Run Pester
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path        = './Tests'
+          $config.Run.Exit        = $true
+          $config.Output.Verbosity = 'Detailed'
+          $config.TestResult.Enabled      = $true
+          $config.TestResult.OutputFormat = 'JUnitXml'
+          $config.TestResult.OutputPath   = "./pester-results-${{ matrix.os }}.xml"
+          Invoke-Pester -Configuration $config
+
+      - name: Upload Pester results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pester-results-${{ matrix.os }}
+          path: ./pester-results-${{ matrix.os }}.xml
+          if-no-files-found: warn

@@ -105,9 +105,20 @@ When **reviewing my code**:
 
 _Claude maintains this section. List anything in the repo that doesn't match the conventions above, with why it's still there and what would need to happen to fix it._
 
+### Resolved
+
+- ~~**`modules/ITToolkit.psm1` is a flat file**~~ — Resolved: now `modules/ITToolkit/{ITToolkit.psd1, ITToolkit.psm1}` with proper manifest (v0.1.0).
+- ~~**No `Tests/` directory**~~ — Resolved: `Tests/ITToolkit.Tests.ps1` covers all 4 module functions (15 pass, 2 skipped on non-Windows for `Test-AdminRights`). Run with `Invoke-Pester ./Tests -Output Detailed`.
+
+### Still drift
+
 - **Lowercase directory names** (`modules/`, `scripts/`, `config/`) instead of PascalCase. Cosmetic; PowerShell on Windows is case-insensitive but Linux filesystems aren't. To fix: `git mv` to PascalCase when there's a natural reason to touch them.
-- **`modules/ITToolkit.psm1` is a flat file**, not `modules/ITToolkit/ITToolkit.psd1 + .psm1`. To fix: scaffold the subdirectory + manifest with `New-ModuleManifest`, move the `.psm1` into it, declare exported functions. Worth doing before the module gains a second function.
 - **`scripts/` has no category subdirectories** — eight `.ps1` files at the top level. To fix: group by purpose (e.g. `endpoint/`, `identity/`, `network/`, `m365/`) once each bucket has enough scripts to justify it.
-- **No `Tests/` directory** — no Pester coverage exists. Heredoc requires Pester for new module functions; existing scripts are uncovered. To fix: backfill tests for `ITToolkit.psm1` first, then add tests alongside any new function.
 - **No `docs/` or `examples/` directories.** Comment-based help in script headers is currently the only documentation. To fix: add once the public surface outgrows README + inline help.
-- **`config/` is not in target structure but is in the repo** (holds `settings.example.json`). Reasonable place for it; treat as accepted convention rather than drift.
+- **No tests for the 8 standalone scripts.** Pester covers the module only. Scripts are mostly thin wrappers around external systems (AD, Graph, registry, winget) that are awkward to test without heavy mocking; left for now. To fix: pick the highest-value script, mock the external calls, and start there.
+
+### Accepted (not drift)
+
+- **`config/`** holds `settings.example.json`. Reasonable place; treat as accepted convention.
+- **`PSScriptAnalyzerSettings.psd1`** at repo root — single source of truth for PSSA rule policy. Per-target exceptions live in source as `[Diagnostics.CodeAnalysis.SuppressMessageAttribute]` with a `Justification`.
+- **`Write-Log` overrides a built-in cmdlet name** — settled API across all 8 scripts. Suppression with explicit reasoning is in the function body.
