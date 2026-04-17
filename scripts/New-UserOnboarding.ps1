@@ -48,6 +48,8 @@
 #Requires -Version 5.1
 #Requires -Modules ActiveDirectory
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '',
+    Justification='The plaintext is generated locally by Membership.GeneratePassword, never sourced externally, then immediately wrapped to SecureString and passed to New-ADUser. There is no plaintext-input vector here.')]
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
 param(
     [Parameter(Mandatory)]

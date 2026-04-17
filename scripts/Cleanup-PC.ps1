@@ -145,10 +145,11 @@ if (-not $SkipBrowserCache) {
     $firefoxProfiles = Join-Path $env:LOCALAPPDATA 'Mozilla\Firefox\Profiles'
     if (Test-Path $firefoxProfiles) {
         $profiles = Get-ChildItem -Path $firefoxProfiles -Directory -ErrorAction SilentlyContinue
-        foreach ($profile in $profiles) {
-            $ffCachePath = Join-Path $profile.FullName 'cache2\entries'
+        # Use $ffProfile to avoid shadowing the automatic $profile variable.
+        foreach ($ffProfile in $profiles) {
+            $ffCachePath = Join-Path $ffProfile.FullName 'cache2\entries'
             $totalRecovered += Remove-ItemsSafely -Path $ffCachePath `
-                -Description "Firefox Cache ($($profile.Name))" -Recurse
+                -Description "Firefox Cache ($($ffProfile.Name))" -Recurse
         }
     }
 }

@@ -45,6 +45,8 @@ function Write-Log {
     .EXAMPLE
         Write-Log -Message "Disk space low" -Level Warning -LogPath "C:\Logs"
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidOverwritingBuiltInCmdlets', '',
+        Justification='Toolkit-wide convention; settled API across all 8 scripts. Renaming would break callers.')]
     [CmdletBinding()]
     param(
         [Parameter(Mandatory, Position = 0)]
@@ -64,7 +66,9 @@ function Write-Log {
             $config = Get-Config -ErrorAction SilentlyContinue
             $LogPath = $config.Logging.Path
         }
-        catch { }
+        catch {
+            Write-Verbose "Get-Config unavailable; using built-in temp fallback: $($_.Exception.Message)"
+        }
     }
     if (-not $LogPath) {
         # Cross-platform temp dir: $env:TEMP is unset on Linux/macOS PowerShell.
@@ -118,7 +122,10 @@ function Test-AdminRights {
     .EXAMPLE
         Test-AdminRights -Required   # Throws if not admin
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '',
+        Justification='"Rights" is a community-standard plural for permission-checking helpers (mirrors Test-Path-style cmdlets in spirit).')]
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [switch]$Required
     )

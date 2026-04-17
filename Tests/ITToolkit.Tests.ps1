@@ -134,7 +134,10 @@ Describe 'Get-Config' {
         $warnings = $null
         try {
             Get-Config -ConfigPath $missingFile -WarningVariable warnings -ErrorAction SilentlyContinue 3>$null
-        } catch { }
+        } catch {
+            # Get-Config throws after warning; catch is intentional to let the warning assertion run.
+            Write-Verbose "Expected throw caught: $($_.Exception.Message)"
+        }
 
         $warnings.Count | Should -BeGreaterThan 0
         $warnings[0].Message | Should -Match 'settings.json not found'

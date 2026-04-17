@@ -118,7 +118,7 @@ function Connect-GraphIfNeeded {
 # ---------------------------------------------------------------------------
 # Action: List compliance policies
 # ---------------------------------------------------------------------------
-function Get-CompliancePolicies {
+function Get-CompliancePolicy {
     [CmdletBinding()]
     param()
 
@@ -147,7 +147,7 @@ function Get-CompliancePolicies {
 # ---------------------------------------------------------------------------
 # Action: Get policy details
 # ---------------------------------------------------------------------------
-function Get-PolicyDetails {
+function Get-PolicyDetail {
     [CmdletBinding()]
     param([string]$Id)
 
@@ -315,14 +315,14 @@ Connect-GraphIfNeeded
 
 switch ($Action) {
     'List' {
-        $result = Get-CompliancePolicies
+        $result = Get-CompliancePolicy
         if ($ExportPath) {
             $result | Export-Csv -Path $ExportPath -NoTypeInformation -Encoding UTF8
             Write-Host "Exported to: $ExportPath" -ForegroundColor Green
         }
     }
     'Get' {
-        Get-PolicyDetails -Id $PolicyId
+        Get-PolicyDetail -Id $PolicyId
     }
     'CheckCompliance' {
         Get-DeviceCompliance -SpecificDeviceId $DeviceId -Export $ExportPath

@@ -47,6 +47,8 @@
 #Requires -Version 5.1
 #Requires -Modules ActiveDirectory
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'IncludeServiceAccounts',
+    Justification='Used inside the nested Get-ADUserData function via script-scope capture; PSSA does not see the closure reference.')]
 [CmdletBinding()]
 param(
     [ValidateScript({

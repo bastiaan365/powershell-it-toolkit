@@ -47,6 +47,8 @@
 
 #Requires -Version 5.1
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingComputerNameHardcoded', '',
+    Justification='8.8.8.8 (Google Public DNS) is used as a sentinel public IP for internet-reachability checks; it leaks no private information about the system or network.')]
 [CmdletBinding()]
 param(
     [string[]]$TestHosts = @('www.microsoft.com', 'www.google.com', 'dns.google'),
@@ -263,7 +265,8 @@ foreach ($url in $testUrls) {
     }
 }
 
-# Basic ping to internet
+# Basic ping to internet - 8.8.8.8 is a public sentinel, not a private target.
+# Suppression for this specific call is applied at the script param block at the top.
 $internetPing = Test-Connection -ComputerName '8.8.8.8' -Count 2 -Quiet -ErrorAction SilentlyContinue
 Add-ReportLine "  ICMP to 8.8.8.8: $(if ($internetPing) { 'OK' } else { 'FAILED' })" $(if ($internetPing) { 'Green' } else { 'Red' })
 Add-ReportBlank

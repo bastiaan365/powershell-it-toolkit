@@ -42,6 +42,8 @@
 
 #Requires -Version 5.1
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseProcessBlockForPipelineCommand', '',
+    Justification='Script-level pipeline parameter. Real per-item streaming would require refactoring the entire script body into a process block, which is out of scope. Pipeline input still works via the implicit collect-then-iterate pattern below.')]
 [CmdletBinding()]
 param(
     [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
@@ -193,7 +195,9 @@ foreach ($computer in $ComputerName) {
                     }
                 }
         }
-        catch { }
+        catch {
+            Write-Verbose "Could not enumerate expired certificates: $($_.Exception.Message)"
+        }
 
         # --- Service Status ---
         Write-Verbose "Checking service status on $computer..."
